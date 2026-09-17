@@ -1,5 +1,3 @@
-import os
-
 from flask import Flask
 
 app = Flask(__name__)
@@ -11,9 +9,12 @@ def page_layout(title, content):
         <head>
             <title>{title}</title>
         </head>
+
         <body>
             <h1>{title}</h1>
+
             {content}
+
             <p>
                 <a href="/">Home</a> |
                 <a href="/about">About</a> |
@@ -32,6 +33,7 @@ def home():
         <p>This portal is designed to help students learn about our programs, campus services, and support team.</p>
         <p>Students can explore course options and get basic information quickly.</p>
     """
+
     return page_layout("Student Portal", content)
 
 
@@ -39,9 +41,9 @@ def home():
 def about():
     content = """
         <p>We are here to provide quality education and excellent student support.</p>
-        <p>Our mission is to help students grow academically and professionally through guidance, learning, and opportunity.</p>
-        <p>We focus on knowledge, discipline, and success for every student.</p>
+        <p>Our mission is to help students grow academically and professionally.</p>
     """
+
     return page_layout("About Us", content)
 
 
@@ -49,6 +51,7 @@ def about():
 def courses():
     content = """
         <p>Available programs include:</p>
+
         <ul>
             <li>BCA</li>
             <li>BSc CS+DS</li>
@@ -60,8 +63,8 @@ def courses():
             <li>BA LLB</li>
             <li>BBA LLB</li>
         </ul>
-        <p>These courses are designed to build strong academic and career foundations.</p>
     """
+
     return page_layout("Courses", content)
 
 
@@ -71,11 +74,10 @@ def contact():
         <p>Email: sysadmin@christuniversity.in</p>
         <p>Phone: +91 00000 00000</p>
         <p>Office Hours: Monday to Saturday, 9:00 AM to 5:00 PM</p>
-        <p>For student support, admissions, and general help, contact the support team anytime during working hours.</p>
     """
+
     return page_layout("Contact Us", content)
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False, threaded=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)
