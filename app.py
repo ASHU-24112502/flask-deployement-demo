@@ -1,83 +1,75 @@
-from flask import Flask
+from flask import Flask, request, render_template_string
+
 
 app = Flask(__name__)
 
-
-def page_layout(title, content):
-    return f"""
-    <html>
-        <head>
-            <title>{title}</title>
-        </head>
-
-        <body>
-            <h1>{title}</h1>
-
-            {content}
-
-            <p>
-                <a href="/">Home</a> |
-                <a href="/about">About</a> |
-                <a href="/courses">Courses</a> |
-                <a href="/contact">Contact</a>
-            </p>
-        </body>
-    </html>
-    """
+students = []
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def home():
-    content = """
-        <p>Welcome to Student Portal.</p>
-        <p>This portal is designed to help students learn about our programs, campus services, and support team.</p>
-        <p>Students can explore course options and get basic information quickly.</p>
-    """
+    message = ""
 
-    return page_layout("Student Portal", content)
+    if request.method == "POST":
+        name = request.form.get("name")
+        register_number = request.form.get("register_number")
+        course = request.form.get("course")
 
+        if name and register_number and course:
+            students.append({
+                "name": name,
+                "register_number": register_number,
+                "course": course
+            })
+            message = "Student information submitted successfully."
+        else:
+            message = "Please fill all fields."
 
-@app.route("/about")
-def about():
-    content = """
-        <p>We are here to provide quality education and excellent student support.</p>
-        <p>Our mission is to help students grow academically and professionally.</p>
-    """
+    return render_template_string("""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Student Information App</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 40px; }
+            input { display: block; margin: 8px 0 15px; padding: 8px; width: 260px; }
+            button { padding: 8px 16px; }
+        </style>
+    </head>
+    <body>
+        <h1>Student Information App</h1>
+        <form method="post">
+            <label>Student Name</label>
+            <input type="text" name="name">
 
-    return page_layout("About Us", content)
+            <label>Register Number</label>
+            <input type="text" name="register_number">
 
+            <label>Course</label>
+            <input type="text" name="course">
 
-@app.route("/courses")
-def courses():
-    content = """
-        <p>Available programs include:</p>
+            <button type="submit">Submit</button>
+        </form>
 
-        <ul>
-            <li>BCA</li>
-            <li>BSc CS+DS</li>
-            <li>MSc DS</li>
-            <li>BSc ES</li>
-            <li>MBA</li>
-            <li>BBA</li>
-            <li>BCom</li>
-            <li>BA LLB</li>
-            <li>BBA LLB</li>
-        </ul>
-    """
+        <p><b>{{ message }}</b></p>
 
-    return page_layout("Courses", content)
-
-
-@app.route("/contact")
-def contact():
-    content = """
-        <p>Email: sysadmin@christuniversity.in</p>
-        <p>Phone: +91 00000 00000</p>
-        <p>Office Hours: Monday to Saturday, 9:00 AM to 5:00 PM</p>
-    """
-
-    return page_layout("Contact Us", content)
+        <h2>Submitted Students</h2>
+        {% if students %}
+            <ul>
+            {% for student in students %}
+                <li>{{ student.name }} - {{ student.register_number }} - {{ student.course }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No student information submitted yet.</p>
+        {% endif %}
+    </body>
+    </html>
+    """, message=message, students=students)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    import os
+
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
